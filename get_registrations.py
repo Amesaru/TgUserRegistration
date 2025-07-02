@@ -11,9 +11,10 @@ initial_step = 250000
 client = TelegramClient('session_name', api_id, api_hash)
 
 async def get_registration_date(bot_username, user_id):
-    await client.send_message(bot_username, "/id " + str(user_id))
-    await asyncio.sleep(3)
-    response = await client.get_messages(bot_username, limit=1)
+    async with client.conversation(bot_username) as conv:
+        await conv.send_message(f"/id {user_id}")
+        response = await conv.get_response()
+    return response.text
     return response[0].message
 
 def parse_date(date_str):
